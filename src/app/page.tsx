@@ -4,8 +4,8 @@ import { format, isToday, isPast, setYear, startOfDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 import FileUpload from '@/components/FileUpload';
 import BirthdayCard from '@/components/BirthdayCard';
+import Header from '@/components/Header';
 import { useBirthdays } from '@/hooks/useBirthdays';
-import { Trash2 } from 'lucide-react';
 
 export default function Dashboard() {
   const { birthdays, saveBirthdays, clearBirthdays, isLoaded } = useBirthdays();
@@ -46,24 +46,7 @@ export default function Dashboard() {
 
   return (
     <main className="max-w-md mx-auto px-4 pt-12 pb-20" dir="rtl">
-      <header className="mb-10">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1F2937] tracking-tight">שלום אולג 👋</h1>
-            <p className="text-[#374151] font-medium mt-1">
-              היום, {format(today, 'd בMMMM yyyy', { locale: he })}
-            </p>
-          </div>
-          {birthdays.length > 0 && (
-            <button
-              onClick={clearBirthdays}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-            >
-              <Trash2 className="w-5 h-5" strokeWidth={1.5} />
-            </button>
-          )}
-        </div>
-      </header>
+      <Header hasData={birthdays.length > 0} onClear={clearBirthdays} />
 
       {birthdays.length === 0 ? (
         <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 shadow-sm">
