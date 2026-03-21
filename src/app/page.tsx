@@ -12,7 +12,6 @@ export default function Dashboard() {
   const [isClient, setIsClient] = useState(false);
   const today = startOfDay(new Date());
 
-  // פתרון לבעיית ה-Hydration של Next.js
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -22,16 +21,14 @@ export default function Dashboard() {
 
     const processed = birthdays.map(p => ({
       ...p,
-      birthday: new Date(p.birthday) // הבטחה שמדובר באובייקט תאריך
-    })).filter(p => !isNaN(p.birthday.getTime())); // סינון תאריכים לא תקינים
+      birthday: new Date(p.birthday)
+    })).filter(p => !isNaN(p.birthday.getTime()));
 
     const sorted = [...processed].sort((a, b) => {
       const aNext = setYear(a.birthday, today.getFullYear());
       const bNext = setYear(b.birthday, today.getFullYear());
-
       const aDate = (isPast(aNext) && !isToday(aNext)) ? setYear(aNext, today.getFullYear() + 1) : aNext;
       const bDate = (isPast(bNext) && !isToday(bNext)) ? setYear(bNext, today.getFullYear() + 1) : bNext;
-
       return aDate.getTime() - bDate.getTime();
     });
 
@@ -41,20 +38,19 @@ export default function Dashboard() {
     };
   }, [birthdays, today]);
 
-  // אם המערכת עדיין בטעינה או לא בצד הלקוח - אל תרנדר כלום מתחת ל-Header
   if (!isLoaded || !isClient) return <div className="min-h-screen bg-[#F9FAFB]" />;
 
   return (
     <main className="max-w-md mx-auto px-4 pt-12 pb-20" dir="rtl">
-      <Header hasData={birthdays.length > 0} onClear={clearBirthdays} />
+      {/* שימוש בקומפוננטה המוכנה של ה-Header */}
+      <Header />
 
       {birthdays.length === 0 ? (
-        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 shadow-sm">
+        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 shadow-sm mt-8">
           <FileUpload onDataParsed={saveBirthdays} />
         </div>
       ) : (
-        <div className="space-y-10">
-          {/* חוגגים היום */}
+        <div className="space-y-10 mt-8">
           <section>
             <h2 className="text-xl font-bold text-[#1F2937] mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500"></span>
@@ -74,7 +70,6 @@ export default function Dashboard() {
             )}
           </section>
 
-          {/* ימי הולדת קרובים */}
           {sortedData.upcoming.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-[#1F2937] mb-4">ימי הולדת קרובים</h2>
@@ -85,6 +80,15 @@ export default function Dashboard() {
               </div>
             </section>
           )}
+
+          <div className="pt-4 text-center">
+            <button
+              onClick={clearBirthdays}
+              className="text-sm text-slate-400 hover:text-red-500 underline transition-colors"
+            >
+              נקה נתונים והעלה קובץ חדש
+            </button>
+          </div>
         </div>
       )}
     </main>
