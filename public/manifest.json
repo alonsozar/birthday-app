@@ -1,0 +1,16 @@
+{
+  "name": "Happy Birthdays",
+  "short_name": "Birthdays",
+  "description": "App for managing and celebrating birthdays",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F9FAFB",
+  "theme_color": "#1F2937",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    }
+  ]
+}
