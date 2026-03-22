@@ -8,7 +8,7 @@ interface HeaderProps {
   onClear?: () => void;
 }
 
-export default function Header({ hasData, onClear }: HeaderProps) {
+export default function MainHeader({ hasData, onClear }: HeaderProps) {
   const today = startOfDay(new Date());
 
   return (

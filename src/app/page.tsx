@@ -4,7 +4,7 @@ import { format, isToday, isPast, setYear, startOfDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 import FileUpload from '@/components/FileUpload';
 import BirthdayCard from '@/components/BirthdayCard';
-import Header from '@/components/Header';
+import MainHeader from '@/components/MainHeader';
 import { useBirthdays } from '@/hooks/useBirthdays';
 
 export default function Dashboard() {
@@ -43,7 +43,7 @@ export default function Dashboard() {
   return (
     <main className="max-w-md mx-auto px-4 pt-12 pb-20" dir="rtl">
       {/* שימוש בקומפוננטה המוכנה של ה-Header */}
-      <Header />
+      <MainHeader />
 
       {birthdays.length === 0 ? (
         <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 shadow-sm mt-8">
