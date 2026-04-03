@@ -84,7 +84,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1 className="app-title">ימי הולדת לקוחות</h1>
+        <div className="app-header-content">
+          <p className="app-greeting">היי אולג,</p>
+          <h1 className="app-title">הנה ימי ההולדת של הלקוחות שלך</h1>
+        </div>
         {fileName && <span className="file-badge">{fileName}</span>}
       </header>
 

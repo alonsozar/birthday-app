@@ -40,19 +40,60 @@ html, body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 100%);
+  background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 60%, #C49A4A 100%);
   color: var(--white);
-  padding: 28px 40px;
+  padding: 32px 48px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 16px rgba(61, 43, 26, 0.2);
+  justify-content: space-between;
+  box-shadow: 0 4px 24px rgba(61, 43, 26, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  right: 120px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.app-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-greeting {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gold-light);
+  letter-spacing: 0.04em;
+  opacity: 0.92;
 }
 
 .app-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .file-badge {
