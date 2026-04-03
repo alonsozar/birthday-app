@@ -1,13 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FileUploader from './components/FileUploader'
 import TodayBirthdays from './components/TodayBirthdays'
 import UpcomingBirthdays from './components/UpcomingBirthdays'
 import CustomerTable from './components/CustomerTable'
 import { parseExcelData } from './utils/parseExcel'
 
+const STORAGE_KEY = 'birthday_app_customers'
+const STORAGE_FILE_KEY = 'birthday_app_filename'
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    // Restore Date objects from ISO strings
+    return parsed.map(c => ({
+      ...c,
+      birthDate: c.birthDate ? new Date(c.birthDate) : null,
+    }))
+  } catch {
+    return []
+  }
+}
+
 export default function App() {
-  const [customers, setCustomers] = useState([])
-  const [fileName, setFileName] = useState('')
+  const [customers, setCustomers] = useState(() => loadFromStorage())
+  const [fileName, setFileName] = useState(() => localStorage.getItem(STORAGE_FILE_KEY) || '')
   const [error, setError] = useState('')
 
   const handleFile = async (file) => {
@@ -20,9 +38,18 @@ export default function App() {
       }
       setCustomers(data)
       setFileName(file.name)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      localStorage.setItem(STORAGE_FILE_KEY, file.name)
     } catch (e) {
       setError('שגיאה בקריאת הקובץ: ' + e.message)
     }
+  }
+
+  const handleClear = () => {
+    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(STORAGE_FILE_KEY)
+    setCustomers([])
+    setFileName('')
   }
 
   const today = new Date()
@@ -75,6 +102,7 @@ export default function App() {
           <>
             <div className="top-bar">
               <FileUploader onFile={handleFile} compact />
+              <button className="clear-btn" onClick={handleClear}>נקה נתונים</button>
               {error && <p className="error-msg">{error}</p>}
             </div>
 

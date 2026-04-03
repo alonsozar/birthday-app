@@ -166,6 +166,24 @@ html, body {
   background: var(--cream-dark);
 }
 
+.clear-btn {
+  border: 1.5px solid #c0392b;
+  border-radius: var(--radius-sm);
+  padding: 8px 18px;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Heebo', sans-serif;
+  font-size: 0.88rem;
+  color: #c0392b;
+  font-weight: 500;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.clear-btn:hover {
+  background: #fdecea;
+}
+
 /* ─── Section titles ─── */
 .section-title {
   font-size: 1.15rem;
