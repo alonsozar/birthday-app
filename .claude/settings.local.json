@@ -4,7 +4,8 @@
       "Bash(where gh:*)",
       "Read(//c/Program Files/**)",
       "Read(//c/Users/97254/AppData/Local/Programs/**)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

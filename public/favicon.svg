@@ -1,3 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <text y=".9em" font-size="90">🎂</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- cake base -->
+  <rect x="3" y="19" width="26" height="9" rx="3" fill="#D4A843"/>
+  <!-- cake mid -->
+  <rect x="5" y="14" width="22" height="7" rx="2" fill="#E8BD6A"/>
+  <!-- cake top -->
+  <rect x="8" y="10" width="16" height="6" rx="2" fill="#F5D48A"/>
+  <!-- frosting drips -->
+  <path d="M8 13 Q10 10 12 13 Q14 10 16 13 Q18 10 20 13 Q22 10 24 13" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- candle left -->
+  <rect x="11" y="5" width="3" height="7" rx="1" fill="#C2503A"/>
+  <!-- candle right -->
+  <rect x="18" y="5" width="3" height="7" rx="1" fill="#A67C55"/>
+  <!-- flame left -->
+  <ellipse cx="12.5" cy="3.8" rx="1.4" ry="1.8" fill="#FF9F43"/>
+  <!-- flame right -->
+  <ellipse cx="19.5" cy="3.8" rx="1.4" ry="1.8" fill="#FFD56B"/>
 </svg>

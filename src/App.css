@@ -170,8 +170,7 @@ html, body {
   border-color: var(--gold-dark);
 }
 
-.file-uploader .upload-icon {
-  font-size: 2.5rem;
+.file-uploader .upload-icon-svg {
   margin-bottom: 12px;
   color: var(--gold);
 }
@@ -203,6 +202,9 @@ html, body {
   font-weight: 500;
   transition: background 0.15s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .file-uploader-compact:hover {
@@ -256,11 +258,23 @@ html, body {
   max-width: 320px;
 }
 
+.today-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.gift-icon {
+  color: var(--brown);
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
 .today-card .customer-name {
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: 6px;
 }
 
 .today-card .customer-age {
