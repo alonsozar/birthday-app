@@ -5,26 +5,28 @@
 }
 
 :root {
-  --cream: #FDF6EC;
-  --cream-dark: #F5E9D5;
-  --gold: #D4A843;
-  --gold-dark: #B8892A;
-  --gold-light: #F0D090;
-  --brown: #8B5E3C;
-  --brown-light: #A67C55;
-  --text-dark: #3D2B1A;
-  --text-mid: #6B4C30;
-  --text-light: #9B7B5A;
+  --cream: #FFF7F0;
+  --cream-dark: #FFE8D6;
+  --gold: #E8A020;
+  --gold-dark: #C4841A;
+  --gold-light: #F5D080;
+  --brown: #C2603A;
+  --brown-light: #D4784E;
+  --accent: #E07B54;
+  --text-dark: #3A2318;
+  --text-mid: #6B3D28;
+  --text-light: #A0624A;
   --white: #FFFFFF;
-  --shadow: 0 2px 12px rgba(139, 94, 60, 0.12);
-  --shadow-md: 0 4px 24px rgba(139, 94, 60, 0.18);
+  --shadow: 0 2px 12px rgba(194, 96, 58, 0.1);
+  --shadow-md: 0 4px 24px rgba(194, 96, 58, 0.16);
   --radius: 12px;
   --radius-sm: 8px;
 }
 
 html, body {
   font-family: 'Heebo', sans-serif;
-  background-color: var(--cream);
+  background: linear-gradient(160deg, #FFF3E8 0%, #FFF9F4 50%, #FFF0E8 100%);
+  background-attachment: fixed;
   color: var(--text-dark);
   direction: rtl;
   min-height: 100vh;
@@ -40,7 +42,7 @@ html, body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 60%, #C49A4A 100%);
+  background: linear-gradient(135deg, #C2503A 0%, #D4724E 45%, #E8A020 100%);
   color: var(--white);
   padding: 32px 48px;
   display: flex;
@@ -207,23 +209,6 @@ html, body {
   background: var(--cream-dark);
 }
 
-.clear-btn {
-  border: 1.5px solid #c0392b;
-  border-radius: var(--radius-sm);
-  padding: 8px 18px;
-  background: transparent;
-  cursor: pointer;
-  font-family: 'Heebo', sans-serif;
-  font-size: 0.88rem;
-  color: #c0392b;
-  font-weight: 500;
-  transition: background 0.15s;
-  white-space: nowrap;
-}
-
-.clear-btn:hover {
-  background: #fdecea;
-}
 
 /* ─── Section titles ─── */
 .section-title {
@@ -247,8 +232,8 @@ html, body {
 
 /* ─── Today Birthdays ─── */
 .today-section {
-  background: linear-gradient(135deg, #FFF8E8 0%, #FFF3D0 100%);
-  border: 1.5px solid var(--gold-light);
+  background: linear-gradient(135deg, #FFF5EC 0%, #FFECD8 100%);
+  border: 1.5px solid #F5C896;
   border-radius: var(--radius);
   padding: 24px;
   box-shadow: var(--shadow);

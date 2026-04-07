@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import FileUploader from './components/FileUploader'
 import TodayBirthdays from './components/TodayBirthdays'
 import UpcomingBirthdays from './components/UpcomingBirthdays'
@@ -45,11 +45,14 @@ export default function App() {
     }
   }
 
-  const handleClear = () => {
-    localStorage.removeItem(STORAGE_KEY)
-    localStorage.removeItem(STORAGE_FILE_KEY)
-    setCustomers([])
-    setFileName('')
+  // Age calculated fresh each render so it's always accurate (not stale from localStorage)
+  const calcAge = (birthDate) => {
+    if (!birthDate) return null
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const m = today.getMonth() - birthDate.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--
+    return age
   }
 
   const today = new Date()
@@ -68,18 +71,21 @@ export default function App() {
     return diff === 365 ? 0 : diff
   }
 
-  const todayBirthdays = customers.filter(c => {
+  // Enrich with live age on every render — never stale
+  const enriched = customers.map(c => ({ ...c, age: calcAge(c.birthDate) }))
+
+  const todayBirthdays = enriched.filter(c => {
     if (!c.birthDate) return false
     return c.birthDate.getDate() === todayDay && (c.birthDate.getMonth() + 1) === todayMonth
   })
 
-  const upcomingBirthdays = customers.filter(c => {
+  const upcomingBirthdays = enriched.filter(c => {
     if (!c.birthDate) return false
     const days = getDaysUntilBirthday(c)
     return days > 0 && days <= 2
   }).sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
 
-  const allSorted = [...customers].sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
+  const allSorted = [...enriched].sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
 
   return (
     <div className="app">
@@ -105,7 +111,6 @@ export default function App() {
           <>
             <div className="top-bar">
               <FileUploader onFile={handleFile} compact />
-              <button className="clear-btn" onClick={handleClear}>נקה נתונים</button>
               {error && <p className="error-msg">{error}</p>}
             </div>
 
