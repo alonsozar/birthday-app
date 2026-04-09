@@ -1,9 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FileUploader from './components/FileUploader'
 import TodayBirthdays from './components/TodayBirthdays'
 import UpcomingBirthdays from './components/UpcomingBirthdays'
 import CustomerTable from './components/CustomerTable'
 import { parseExcelData } from './utils/parseExcel'
+import { syncCustomersToSupabase } from './utils/supabase'
+
+const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
+
+function urlBase64ToUint8Array(base64) {
+  const pad = '='.repeat((4 - (base64.length % 4)) % 4)
+  const b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/')
+  const raw = atob(b64)
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)))
+}
+
+async function setupPushNotifications() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js')
+    const existing = await reg.pushManager.getSubscription()
+    if (existing) return // already subscribed
+
+    const permission = await Notification.requestPermission()
+    if (permission !== 'granted') return
+
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    })
+
+    await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription: sub.toJSON() })
+    })
+  } catch (e) {
+    console.error('Push setup failed:', e)
+  }
+}
 
 const STORAGE_KEY = 'birthday_app_customers'
 const STORAGE_FILE_KEY = 'birthday_app_filename'
@@ -28,6 +63,10 @@ export default function App() {
   const [fileName, setFileName] = useState(() => localStorage.getItem(STORAGE_FILE_KEY) || '')
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    setupPushNotifications()
+  }, [])
+
   const handleFile = async (file) => {
     setError('')
     try {
@@ -40,6 +79,7 @@ export default function App() {
       setFileName(file.name)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
       localStorage.setItem(STORAGE_FILE_KEY, file.name)
+      syncCustomersToSupabase(data) // sync to Supabase in background
     } catch (e) {
       setError('שגיאה בקריאת הקובץ: ' + e.message)
     }
