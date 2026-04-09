@@ -62,12 +62,13 @@ export default function App() {
   const getDaysUntilBirthday = (customer) => {
     const bday = customer.birthDate
     if (!bday) return Infinity
-    const thisYear = today.getFullYear()
-    let next = new Date(thisYear, bday.getMonth(), bday.getDate())
-    if (next < today) {
-      next = new Date(thisYear + 1, bday.getMonth(), bday.getDate())
+    // Normalize to midnight so time-of-day doesn't affect the day count
+    const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    let next = new Date(today.getFullYear(), bday.getMonth(), bday.getDate())
+    if (next < todayMidnight) {
+      next = new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate())
     }
-    const diff = Math.round((next - today) / (1000 * 60 * 60 * 24))
+    const diff = (next - todayMidnight) / (1000 * 60 * 60 * 24)
     return diff === 365 ? 0 : diff
   }
 
