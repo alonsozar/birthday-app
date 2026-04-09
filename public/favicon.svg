@@ -1,18 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- cake base -->
-  <rect x="3" y="19" width="26" height="9" rx="3" fill="#D4A843"/>
-  <!-- cake mid -->
-  <rect x="5" y="14" width="22" height="7" rx="2" fill="#E8BD6A"/>
-  <!-- cake top -->
-  <rect x="8" y="10" width="16" height="6" rx="2" fill="#F5D48A"/>
-  <!-- frosting drips -->
-  <path d="M8 13 Q10 10 12 13 Q14 10 16 13 Q18 10 20 13 Q22 10 24 13" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <!-- candle left -->
-  <rect x="11" y="5" width="3" height="7" rx="1" fill="#C2503A"/>
-  <!-- candle right -->
-  <rect x="18" y="5" width="3" height="7" rx="1" fill="#A67C55"/>
-  <!-- flame left -->
-  <ellipse cx="12.5" cy="3.8" rx="1.4" ry="1.8" fill="#FF9F43"/>
-  <!-- flame right -->
-  <ellipse cx="19.5" cy="3.8" rx="1.4" ry="1.8" fill="#FFD56B"/>
+  <!-- Background rounded square -->
+  <rect x="0" y="0" width="32" height="32" rx="7" fill="#C2603A"/>
+
+  <!-- Bottom cake tier -->
+  <rect x="3" y="20" width="26" height="8" rx="2.5" fill="#D4A843"/>
+  <!-- Middle tier -->
+  <rect x="6" y="14" width="20" height="8" rx="2" fill="#E8BD6A"/>
+  <!-- Top tier -->
+  <rect x="9.5" y="9" width="13" height="7" rx="2" fill="#F5D090"/>
+
+  <!-- Frosting wave on bottom tier -->
+  <path d="M4 20 Q7 17 10 20 Q13 17 16 20 Q19 17 22 20 Q25 17 28 20"
+        stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <!-- Frosting wave on middle tier -->
+  <path d="M7 14 Q9.5 11.5 12 14 Q14.5 11.5 17 14 Q19.5 11.5 22 14 Q24.5 11.5 25 14"
+        stroke="white" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+
+  <!-- Left candle -->
+  <rect x="12" y="4" width="2.8" height="6.5" rx="1" fill="#E05555"/>
+  <!-- Right candle -->
+  <rect x="17.2" y="4" width="2.8" height="6.5" rx="1" fill="#5B9BD5"/>
+
+  <!-- Left flame -->
+  <ellipse cx="13.4" cy="3.2" rx="1.6" ry="2.2" fill="#FFD93D"/>
+  <ellipse cx="13.4" cy="1.8" rx="0.9" ry="1.2" fill="#FF9F43"/>
+  <!-- Right flame -->
+  <ellipse cx="18.6" cy="3.2" rx="1.6" ry="2.2" fill="#FFD93D"/>
+  <ellipse cx="18.6" cy="1.8" rx="0.9" ry="1.2" fill="#FF9F43"/>
+
+  <!-- Decorative dots on bottom tier -->
+  <circle cx="7"  cy="24.5" r="1.3" fill="#FF6B6B"/>
+  <circle cx="11" cy="24.5" r="1.3" fill="white"/>
+  <circle cx="16" cy="24.5" r="1.3" fill="#FFD93D"/>
+  <circle cx="21" cy="24.5" r="1.3" fill="#FF6B6B"/>
+  <circle cx="25" cy="24.5" r="1.3" fill="white"/>
 </svg>
