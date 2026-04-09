@@ -3,44 +3,11 @@ import FileUploader from './components/FileUploader'
 import TodayBirthdays from './components/TodayBirthdays'
 import UpcomingBirthdays from './components/UpcomingBirthdays'
 import CustomerTable from './components/CustomerTable'
+import NotificationSettings from './components/NotificationSettings'
 import { parseExcelData } from './utils/parseExcel'
 import { syncCustomersToSupabase } from './utils/supabase'
 
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
-
-function urlBase64ToUint8Array(base64) {
-  const pad = '='.repeat((4 - (base64.length % 4)) % 4)
-  const b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/')
-  const raw = atob(b64)
-  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)))
-}
-
-async function setupPushNotifications() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
-  try {
-    const reg = await navigator.serviceWorker.register('/sw.js')
-    const existing = await reg.pushManager.getSubscription()
-    if (existing) return // already subscribed
-
-    const permission = await Notification.requestPermission()
-    if (permission !== 'granted') return
-
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    })
-
-    await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription: sub.toJSON() })
-    })
-  } catch (e) {
-    console.error('Push setup failed:', e)
-  }
-}
-
-const STORAGE_KEY = 'birthday_app_customers'
+const STORAGE_KEY      = 'birthday_app_customers'
 const STORAGE_FILE_KEY = 'birthday_app_filename'
 
 function loadFromStorage() {
@@ -48,7 +15,6 @@ function loadFromStorage() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    // Restore Date objects from ISO strings
     return parsed.map(c => ({
       ...c,
       birthDate: c.birthDate ? new Date(c.birthDate) : null,
@@ -58,14 +24,19 @@ function loadFromStorage() {
   }
 }
 
+// Register SW silently on load (so it's ready when user opens settings)
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return
+  try { await navigator.serviceWorker.register('/sw.js') } catch {}
+}
+
 export default function App() {
   const [customers, setCustomers] = useState(() => loadFromStorage())
-  const [fileName, setFileName] = useState(() => localStorage.getItem(STORAGE_FILE_KEY) || '')
-  const [error, setError] = useState('')
+  const [fileName, setFileName]   = useState(() => localStorage.getItem(STORAGE_FILE_KEY) || '')
+  const [error, setError]         = useState('')
+  const [showSettings, setShowSettings] = useState(false)
 
-  useEffect(() => {
-    setupPushNotifications()
-  }, [])
+  useEffect(() => { registerSW() }, [])
 
   const handleFile = async (file) => {
     setError('')
@@ -79,13 +50,12 @@ export default function App() {
       setFileName(file.name)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
       localStorage.setItem(STORAGE_FILE_KEY, file.name)
-      syncCustomersToSupabase(data) // sync to Supabase in background
+      syncCustomersToSupabase(data)
     } catch (e) {
       setError('שגיאה בקריאת הקובץ: ' + e.message)
     }
   }
 
-  // Age calculated fresh each render so it's always accurate (not stale from localStorage)
   const calcAge = (birthDate) => {
     if (!birthDate) return null
     const today = new Date()
@@ -95,38 +65,34 @@ export default function App() {
     return age
   }
 
-  const today = new Date()
-  const todayDay = today.getDate()
+  const today      = new Date()
+  const todayDay   = today.getDate()
   const todayMonth = today.getMonth() + 1
 
   const getDaysUntilBirthday = (customer) => {
     const bday = customer.birthDate
     if (!bday) return Infinity
-    // Normalize to midnight so time-of-day doesn't affect the day count
     const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
     let next = new Date(today.getFullYear(), bday.getMonth(), bday.getDate())
-    if (next < todayMidnight) {
-      next = new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate())
-    }
+    if (next < todayMidnight) next = new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate())
     const diff = (next - todayMidnight) / (1000 * 60 * 60 * 24)
     return diff === 365 ? 0 : diff
   }
 
-  // Enrich with live age on every render — never stale
   const enriched = customers.map(c => ({ ...c, age: calcAge(c.birthDate) }))
 
-  const todayBirthdays = enriched.filter(c => {
-    if (!c.birthDate) return false
-    return c.birthDate.getDate() === todayDay && (c.birthDate.getMonth() + 1) === todayMonth
-  })
+  const todayBirthdays = enriched.filter(c =>
+    c.birthDate && c.birthDate.getDate() === todayDay && (c.birthDate.getMonth() + 1) === todayMonth
+  )
 
-  const upcomingBirthdays = enriched.filter(c => {
-    if (!c.birthDate) return false
-    const days = getDaysUntilBirthday(c)
-    return days > 0 && days <= 2
-  }).sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
+  const upcomingBirthdays = enriched
+    .filter(c => { const d = getDaysUntilBirthday(c); return d > 0 && d <= 2 })
+    .sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
 
   const allSorted = [...enriched].sort((a, b) => getDaysUntilBirthday(a) - getDaysUntilBirthday(b))
+
+  // Bell icon — shows filled/outline based on notification permission
+  const notifGranted = typeof Notification !== 'undefined' && Notification.permission === 'granted'
 
   return (
     <div className="app">
@@ -135,7 +101,23 @@ export default function App() {
           <p className="app-greeting">היי אולג,</p>
           <h1 className="app-title">הנה ימי ההולדת של הלקוחות שלך</h1>
         </div>
-        {fileName && <span className="file-badge">{fileName}</span>}
+
+        <div className="header-actions">
+          {fileName && <span className="file-badge">{fileName}</span>}
+          <button
+            className={`bell-btn ${notifGranted ? 'bell-active' : ''}`}
+            onClick={() => setShowSettings(true)}
+            title="הגדרות התראות"
+            aria-label="הגדרות התראות"
+          >
+            {/* Bell SVG */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              {notifGranted && <circle cx="18" cy="5" r="4" fill="#FFD93D" stroke="#E8A020" strokeWidth="1.5"/>}
+            </svg>
+          </button>
+        </div>
       </header>
 
       <main className="app-main">
@@ -155,15 +137,10 @@ export default function App() {
               {error && <p className="error-msg">{error}</p>}
             </div>
 
-            {todayBirthdays.length > 0 && (
-              <TodayBirthdays customers={todayBirthdays} />
-            )}
+            {todayBirthdays.length > 0 && <TodayBirthdays customers={todayBirthdays} />}
 
             {upcomingBirthdays.length > 0 && (
-              <UpcomingBirthdays
-                customers={upcomingBirthdays}
-                getDaysUntil={getDaysUntilBirthday}
-              />
+              <UpcomingBirthdays customers={upcomingBirthdays} getDaysUntil={getDaysUntilBirthday} />
             )}
 
             {todayBirthdays.length === 0 && upcomingBirthdays.length === 0 && (
@@ -180,6 +157,8 @@ export default function App() {
           </>
         )}
       </main>
+
+      {showSettings && <NotificationSettings onClose={() => setShowSettings(false)} />}
     </div>
   )
 }
